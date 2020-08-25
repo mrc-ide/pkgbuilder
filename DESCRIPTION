@@ -11,7 +11,11 @@ Encoding: UTF-8
 LazyData: true
 Language: en-GB
 Imports:
+    callr,
+    ids,
     gert,
+    jsonlite,
+    liteq,
     pak (>= 0.1.2.9001),
     pkgbuild,
     pkgdepends,

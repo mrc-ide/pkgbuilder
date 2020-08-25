@@ -12,6 +12,41 @@ temp_dir <- function(type, workdir = NULL) {
 }
 
 
+scalar <- function(x) {
+  jsonlite::unbox(x)
+}
+
+
+to_json <- function(x, ...) {
+  jsonlite::toJSON(x, ..., null = "null")
+}
+
+
+from_json <- function(x) {
+  jsonlite::fromJSON(x, FALSE)
+}
+
+
+squote <- function(x) {
+  sprintf("'%s'", x)
+}
+
+
 dir_create <- function(path) {
   dir.create(path, FALSE, TRUE)
+}
+
+
+read_lines_safely <- function(path) {
+  tryCatch(readLines(path), error = function(e) character())
+}
+
+
+vcapply <- function(x, fun, ...) {
+  vapply(x, fun, "", ...)
+}
+
+
+data_frame <- function(...) {
+  data.frame(..., stringsAsFactors = FALSE, check.names = FALSE)
 }
