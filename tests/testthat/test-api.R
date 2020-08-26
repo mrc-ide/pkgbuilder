@@ -205,3 +205,21 @@ test_that("construct api", {
   expect_equal(from_json(res$body)$data,
                list(status = "READY", log = NULL))
 })
+
+
+test_that("run api", {
+  mock_api <- list(run = mockery::mock())
+  mock_api_build <- mockery::mock(mock_api)
+  versions <- c("3.6", "4.0")
+  workdir <- tempfile()
+  port <- 8080
+  with_mock(
+    "pkgbuilder:::api_build" = mock_api_build,
+    pb_server(versions, workdir, port))
+
+  mockery::expect_called(mock_api_build, 1)
+  expect_s3_class(mockery::mock_args(mock_api_build)[[1]][[1]], "queue")
+
+  mockery::expect_called(mock_api$run, 1)
+  expect_equal(mockery::mock_args(mock_api$run)[[1]], list(port = 8080))
+})

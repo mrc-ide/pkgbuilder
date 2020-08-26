@@ -1,3 +1,27 @@
+##' Run a pkgbuilder server
+##'
+##' @title Run a pkgbuilder server
+##'
+##' @param versions A vector of 2-digit version numbers corresponding
+##'   to the versions of R to build packages for.  Workers will need
+##'   to be provided separately to build the packages.
+##'
+##' @param workdir A directory to work in. This must be shared between
+##'   the workers and the server, so do not use a temporary directory.
+##'
+##' @param port The port to run on. Your operating system will likely
+##'   restrict you from using very low port numbers, so use something
+##'   like 8080
+##'
+##' @return Never returns - runs a HTTP server as a side-effect
+##' @export
+pb_server <- function(versions, workdir, port) {
+  queue <- queue$new(version, workdir)
+  api <- api_build(queue)
+  api$run(port = port)
+}
+
+
 api_build <- function(queue) {
   api <- pkgapi::pkgapi$new()
   api$handle(endpoint_root(queue))
