@@ -2,7 +2,6 @@ queue <- R6::R6Class(
   "queue",
 
   private = list(
-    versions = NULL,
     workdir = NULL,
     queue = NULL,
 
@@ -21,21 +20,24 @@ queue <- R6::R6Class(
   ),
 
   public = list(
+    versions = NULL,
+
     initialize = function(versions, workdir) {
       dir_create(workdir)
 
-      private$versions <- versions
+      self$versions <- versions
       private$workdir <- workdir
       private$queue <- path_queue(workdir)
-      for (v in private$versions) {
+      for (v in self$versions) {
         liteq::ensure_queue(v, private$queue)
         dir_create(path_log(workdir, v, ""))
         dir_create(path_binary(workdir, v, ""))
       }
+      lockBinding("versions", self)
     },
 
     submit = function(version, ref, extra_dependencies) {
-      check_version(version, private$versions)
+      check_version(version, self$versions)
 
       lq <- liteq::ensure_queue(version, private$queue)
       id <- ids::random_id()
@@ -50,7 +52,7 @@ queue <- R6::R6Class(
     },
 
     list = function(version) {
-      check_version(version, private$versions)
+      check_version(version, self$versions)
       lq <- liteq::ensure_queue(version, private$queue)
       data <- liteq::list_messages(lq)
       data_frame(id = data$title, status = data$status)
@@ -78,7 +80,7 @@ queue <- R6::R6Class(
     },
 
     result = function(version, id) {
-      check_version(version, private$versions)
+      check_version(version, self$versions)
       ## NOTE: ignores version, but I think that's ok. However, we
       ## might structure this directory by version later.
       if (private$is_complete(version, id)) {

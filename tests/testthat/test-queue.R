@@ -54,3 +54,10 @@ test_that("queue validate versions", {
                "'version' must be one of '3.5', '3.6'",
                fixed = TRUE)
 })
+
+
+test_that("queue returns versions", {
+  workdir <- tempfile()
+  expect_equal(queue$new("4.0", workdir)$versions, "4.0")
+  expect_equal(queue$new(c("3.6", "4.0"), workdir)$versions, c("3.6", "4.0"))
+})
