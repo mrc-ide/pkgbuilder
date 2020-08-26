@@ -23,7 +23,8 @@ to_json <- function(x, ...) {
 
 
 from_json <- function(x) {
-  jsonlite::fromJSON(x, FALSE)
+  jsonlite::fromJSON(x, simplifyVector = TRUE,
+                     simplifyDataFrame = FALSE, simplifyMatrix = FALSE)
 }
 
 

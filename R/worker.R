@@ -16,6 +16,10 @@ worker_build <- function(version, id, data) {
   dir.create(dirname(logfile), FALSE, TRUE)
   args <- data
 
+  ## This is using callr as a way of getting all the output (stdout
+  ## and stderr) stored into a file. We might be able to pull this off
+  ## with functions in withr and not use the additional process, but
+  ## it might be for the best really?
   tryCatch({
     path <- callr::r(
       function(ref, extra_dependencies, workdir)
