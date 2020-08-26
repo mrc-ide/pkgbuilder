@@ -57,7 +57,7 @@ jobs:
       # think when it becomes needed it will start passing as it looks
       # like we're getting an empty command coming through to sudo
       - name: Install system dependencies
-        if: false && runner.os == 'Linux'
+        if: runner.os == 'Linux'
         run: |
           set -x
           while read -r cmd
