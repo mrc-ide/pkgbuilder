@@ -13,7 +13,7 @@ test_that("build a package", {
   ## > pak::local_install(res, lib)
   ## > pak::pkg_install(paste0("local::", res), lib)
   ## However, a direct install does work
-  install.packages(res, lib2, repos = NULL)
+  install.packages(res, lib, repos = NULL)
 
   expect_true("defer" %in% dir(lib))
 })
