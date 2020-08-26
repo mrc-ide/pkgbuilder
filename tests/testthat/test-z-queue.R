@@ -21,6 +21,4 @@ test_that("run a job in a queue", {
 
   res <- q$result(version, id)
   expect_true(file.exists(res))
-  expect_match(basename(res),
-               "defer_[0-9]+\\.[0-9]+\\.[0-9]+\\.(tgz|zip|tar.gz)$")
 })
