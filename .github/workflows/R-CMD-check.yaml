@@ -68,8 +68,8 @@ jobs:
       - name: Install dependencies
         run: |
           install.packages("pak", repos = "https://r-lib.github.io/p/pak/dev/")
-          remotes::install_deps(dependencies = TRUE)
-          remotes::install_cran("rcmdcheck")
+          pak::local_install_dev_deps()
+          pak::pkg_install("covr")
         shell: Rscript {0}
 
       - name: Check

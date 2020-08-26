@@ -21,3 +21,5 @@ Suggests:
     testthat
 RoxygenNote: 7.1.1
 Roxygen: list(markdown = TRUE)
+Remotes: r-lib/pkgdepends
+Additional_repositories: https://r-lib.github.io/p/pak/dev/

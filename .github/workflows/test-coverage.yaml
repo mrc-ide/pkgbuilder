@@ -36,10 +36,9 @@ jobs:
 
       - name: Install dependencies
         run: |
-          install.packages(c("remotes"))
           install.packages("pak", repos = "https://r-lib.github.io/p/pak/dev/")
-          remotes::install_deps(dependencies = TRUE)
-          remotes::install_cran("covr")
+          pak::local_install_dev_deps()
+          pak::pkg_install("covr")
         shell: Rscript {0}
 
       - name: Test coverage

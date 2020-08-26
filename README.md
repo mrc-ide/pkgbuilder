@@ -7,6 +7,15 @@
 [![CodeFactor](https://www.codefactor.io/repository/github/mrc-ide/pkgbuilder/badge)](https://www.codefactor.io/repository/github/mrc-ide/pkgbuilder)
 <!-- badges: end -->
 
+## Installation
+
+We require the in-development version of `pak` with its bundled library, at least for now. Install first with:
+
+```r
+install.packages("pak", repos = "https://r-lib.github.io/p/pak/dev/")
+remotes::install_github("mrc-ide/pkgbuilder")
+```
+
 ## License
 
 MIT © Imperial College of Science, Technology and Medicine
