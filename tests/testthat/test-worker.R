@@ -103,7 +103,9 @@ test_that("report back to queue on failure", {
 
   with_mock(
     "pkgbuilder:::worker_build" = mock_worker_build,
-    worker_poll(lq, version, Inf))
+    expect_message(
+      worker_poll(lq, version, Inf),
+      sprintf("Failed 'user/repo' (%s)", id), fixed = TRUE))
 
   expect_equal(q$list(version)$status, "FAILED")
   expect_equal(q$status(version, id), list(status = "FAILED", log = NULL))
@@ -135,7 +137,9 @@ test_that("remove from queue on success", {
 
   with_mock(
     "pkgbuilder:::worker_build" = mock_worker_build,
-    worker_poll(lq, version, Inf))
+    expect_message(
+      worker_poll(lq, version, Inf),
+      sprintf("Built 'user/repo' (%s)", id), fixed = TRUE))
 
   expect_equal(q$list(version)$status, character(0))
   expect_equal(q$status(version, id), list(status = "COMPLETE", log = NULL))

@@ -58,10 +58,14 @@ worker_poll <- function(queue, version, timeout) {
   ## practically this is not very interesting to do.
   m <- liteq::consume(queue)
   id <- m$title
-  success <- worker_build(version, id, from_json(m$message), timeout)
+  data <- from_json(m$message)
+  message(sprintf("Running '%s' (%s)", data$ref, id))
+  success <- worker_build(version, id, data, timeout)
   if (success) {
+    message(sprintf("Built '%s' (%s)", data$ref, id))
     liteq::ack(m)
   } else {
+    message(sprintf("Failed '%s' (%s)", data$ref, id))
     liteq::nack(m)
   }
   TRUE
