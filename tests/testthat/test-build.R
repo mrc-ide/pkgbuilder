@@ -19,7 +19,7 @@ test_that("pb_install_dependencies does not install NULL extra deps", {
   mockery::expect_called(mock_local_install_dev_deps, 1)
   args <- mockery::mock_args(mock_local_install_dev_deps)[[1]]
   lib <- args[[2]]
-  expect_equal(dirname(lib), workdir)
+  expect_true(same_path(dirname(lib), workdir))
   expect_match(basename(lib), "^pb_lib_")
   expect_equal(args, list(path, lib, ask = FALSE))
 })
@@ -42,7 +42,7 @@ test_that("pb_install_dependencies installs extra deps", {
   mockery::expect_called(mock_pkg_install, 1)
   args <- mockery::mock_args(mock_pkg_install)[[1]]
   lib <- args[[2]]
-  expect_equal(dirname(lib), workdir)
+  expect_true(same_path(dirname(lib), workdir))
   expect_match(basename(lib), "^pb_lib_")
   expect_equal(args, list(extra, lib, ask = FALSE))
 
@@ -65,12 +65,12 @@ test_that("pb_build_binary sets .libPaths()", {
   res <- with_mock(
     "pkgbuild::build" = mock_build,
     pb_build_binary(path, lib, workdir))
-  expect_equal(res[[1]], normalizePath(lib))
+  expect_true(same_path(res[[1]], lib))
   mockery::expect_called(mock_build, 1)
 
   args <- mockery::mock_args(mock_build)[[1]]
   dest <- args[[2]]
-  expect_equal(dirname(dest), workdir)
+  expect_true(same_path(dirname(dest), workdir))
   expect_match(basename(dest), "^pb_bin_")
 
   expect_equal(args, list(path, dest, binary = TRUE))
@@ -149,7 +149,7 @@ test_that("update source tree from mirror gets correct reference", {
     "gert::git_branch_create" = mock_git_branch_create,
     pb_update_source_tree(ref, mirror, workdir))
 
-  expect_equal(dirname(src), workdir)
+  expect_true(same_path(dirname(src), workdir))
   expect_match(basename(src), "^pb_src_")
 
   mockery::expect_called(mock_git_clone, 1)
@@ -176,7 +176,7 @@ test_that("update source tree from mirror ignores missing reference", {
     "gert::git_branch_create" = mock_git_branch_create,
     pb_update_source_tree(ref, mirror, workdir))
 
-  expect_equal(dirname(src), workdir)
+  expect_true(same_path(dirname(src), workdir))
   expect_match(basename(src), "^pb_src_")
 
   mockery::expect_called(mock_git_clone, 1)
