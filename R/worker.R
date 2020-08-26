@@ -1,3 +1,16 @@
+##' Run a pkgbuilder worker
+##'
+##' @title Run a pkgbuilder worker
+##'
+##' @param workdir Working directory for the queue - must be shared
+##'   with the server process.
+##'
+##' @param timeout A per-job timeout.  Builds that take longer than
+##'   this many seconds will be terminated.
+##'
+##' @return Never returns, runs a worker as a side-effect
+##'
+##' @export
 pb_worker <- function(workdir, timeout = NULL) {
   path <- path_queue(workdir)
   timeout <- check_timeout(timeout)
