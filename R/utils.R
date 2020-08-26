@@ -10,3 +10,8 @@ temp_dir <- function(type, workdir = NULL) {
   dir.create(ret, FALSE, TRUE)
   ret
 }
+
+
+dir_create <- function(path) {
+  dir.create(path, FALSE, TRUE)
+}

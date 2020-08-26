@@ -59,7 +59,7 @@ test_that("pb_build_binary sets .libPaths()", {
   path <- tempfile()
   lib <- tempfile()
   workdir <- tempfile()
-  dir.create(lib)
+  dir_create(lib)
   on.exit(unlink(lib, recursive = TRUE))
 
   res <- with_mock(
@@ -118,7 +118,7 @@ test_that("update mirror fetches path if it does exist", {
   mock_git_fetch <- mockery::mock()
   mock_git_clone <- mockery::mock()
   expected_mirror <- file.path(workdir, "mirror/github", ref)
-  dir.create(expected_mirror, FALSE, TRUE)
+  dir_create(expected_mirror)
   on.exit(unlink(expected_mirror, recursive = TRUE))
 
   mirror <- with_mock(
@@ -195,8 +195,8 @@ test_that("pb_build passes expected arguments and cleans up", {
   mirror <- tempfile()
   src <- tempfile()
   lib <- tempfile()
-  dir.create(src, FALSE, TRUE)
-  dir.create(lib, FALSE, TRUE)
+  dir_create(src)
+  dir_create(lib)
 
   mock_update_mirror <- mockery::mock(mirror)
   mock_update_source_tree <- mockery::mock(src)

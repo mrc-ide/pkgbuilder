@@ -49,7 +49,7 @@ pb_install_dependencies <- function(path, extra, workdir) {
 pb_build_binary <- function(path, lib, workdir) {
   dest <- temp_dir("bin", workdir)
   message("Building binary")
-  dir.create(dest, FALSE, TRUE)
+  dir_create(dest)
   withr::with_libpaths(
     lib,
     pkgbuild::build(path, dest, binary = TRUE))
@@ -66,6 +66,7 @@ pb_update_mirror <- function(ref, workdir) {
   url <- sprintf("https://github.com/%s/%s", ref$username, ref$repo)
   mirror <- file.path(workdir %||% tempdir(), "mirror",
                       ref$type, ref$username, ref$repo)
+  dir_create(dirname(mirror))
   if (file.exists(mirror)) {
     message(sprintf("Updating repo '%s'", url))
     gert::git_fetch("origin", repo = mirror)

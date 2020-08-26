@@ -7,7 +7,7 @@ test_that("build a package", {
   expect_true(file.exists(file.path(workdir, "mirror/github/reside-ic/defer")))
 
   lib <- tempfile()
-  dir.create(lib)
+  dir_create(lib)
   pak::local_install(res, lib)
 
   expect_true("defer" %in% dir(lib))
@@ -21,7 +21,7 @@ test_that("build a package with compiled code", {
   expect_true(file.exists(file.path(workdir, "mirror/github/mrc-ide/ring")))
 
   lib <- tempfile()
-  dir.create(lib)
+  dir_create(lib)
   pak::local_install(res, lib)
 
   expect_true(all(c("R6", "ring") %in% dir(lib)))
@@ -40,7 +40,7 @@ test_that("build a package with extra dependencies", {
   expect_true(file.exists(file.path(workdir, "mirror/github/mrc-ide/dde")))
 
   lib <- tempfile()
-  dir.create(lib)
+  dir_create(lib)
   pak::local_install(res, lib)
 
   expect_true("dde" %in% dir(lib))
