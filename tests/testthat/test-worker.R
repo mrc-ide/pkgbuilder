@@ -156,16 +156,14 @@ test_that("construct worker", {
   version <- r_version2()
   q <- queue$new(unique(c("3.6", "4.0", version)), workdir)
 
-  mock_worker_poll <- mockery::mock()
+  mock_worker_poll <- mockery::mock(TRUE, TRUE, FALSE)
   with_mock("pkgbuilder:::worker_poll" = mock_worker_poll, {
-    poll <- pb_worker(workdir, NULL)
-    expect_is(poll, "function")
-    poll()
-    mockery::expect_called(mock_worker_poll, 1)
-    args <- mockery::mock_args(mock_worker_poll)[[1]]
-    expect_s3_class(args[[1]], "liteq_queue")
-    expect_equal(args[[2]], version)
-    expect_equal(args[[3]], Inf)
+    pb_worker(workdir, NULL)
+    mockery::expect_called(mock_worker_poll, 3)
+    lq <- liteq::ensure_queue(version, path_queue(workdir))
+    expect_equal(
+      mockery::mock_args(mock_worker_poll),
+      rep(list(list(lq, version, Inf)), 3))
   })
 })
 

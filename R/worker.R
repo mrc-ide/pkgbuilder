@@ -6,8 +6,13 @@ pb_worker <- function(workdir, timeout = NULL) {
   check_version(version, vcapply(liteq::list_queues(path), "[[", "name"))
   queue <- liteq::ensure_queue(version, path)
 
-  function() {
-    worker_poll(queue, version, timeout)
+  ## Run the loop forever. Practically this will run without stopping,
+  ## and the check here is only for testing where we'll have the poll
+  ## stop
+  repeat {
+    if (!worker_poll(queue, version, timeout)) {
+      break
+    }
   }
 }
 
@@ -46,6 +51,7 @@ worker_poll <- function(queue, version, timeout) {
   } else {
     liteq::nack(m)
   }
+  TRUE
 }
 
 
