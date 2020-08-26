@@ -77,7 +77,7 @@ target_submit <- function(queue) {
 endpoint_submit <- function(queue) {
   returning <- pkgapi::pkgapi_returning_json("Submit.schema", schema_root())
   pkgapi::pkgapi_endpoint$new(
-    "POST", "/<version>/submit", target_submit(queue),
+    "POST", "/<version>/submit/ref", target_submit(queue),
     pkgapi::pkgapi_input_body_json("data", "Submission.schema", schema_root()),
     returning = returning)
 }
@@ -99,7 +99,7 @@ endpoint_status <- function(queue) {
   returning <- pkgapi::pkgapi_returning_json("Status.schema", schema_root())
   pkgapi::pkgapi_endpoint$new(
     "GET", "/<version>/status/<id>", target_status(queue),
-    pkgapi::pkgapi_input_query(log = "logical"),
+    pkgapi::pkgapi_input_query(log = "logical", skip = "integer"),
     returning = returning)
 }
 

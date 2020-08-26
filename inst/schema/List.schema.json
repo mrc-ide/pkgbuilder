@@ -9,7 +9,7 @@
             },
             "status": {
                 "type": "string",
-                "enum": ["READY", "RUNNING", "COMPLETE", "ERROR", "UNKNOWN"]
+                "enum": ["READY", "WORKING", "COMPLETE", "ERROR", "UNKNOWN"]
             }
         },
         "required": ["id", "status"],

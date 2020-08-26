@@ -45,13 +45,13 @@ test_that("Can get status", {
 test_that("can get logs from status", {
   q <- list(
     status = function(version, id, log = FALSE) {
-      list(status = "RUNNING",
+      list(status = "WORKING",
            log = if (log) log_data else NULL)
     })
 
   version <- "4.0"
   id <- ids::random_id()
-  status <- "RUNNING"
+  status <- "WORKING"
   log_data <- letters[1:5]
 
   endpoint <- endpoint_status(q)
@@ -59,24 +59,24 @@ test_that("can get logs from status", {
   res <- endpoint$run(version, id)
   expect_equal(res$status_code, 200L)
   expect_equal(res$content_type, "application/json")
-  expect_equal(res$data, list(status = scalar("RUNNING"), log = NULL))
+  expect_equal(res$data, list(status = scalar("WORKING"), log = NULL))
 
   expect_identical(endpoint$run(version, id, FALSE, 10), res)
 
   res <- endpoint$run(version, id, TRUE)
   expect_equal(res$status_code, 200L)
   expect_equal(res$content_type, "application/json")
-  expect_equal(res$data, list(status = scalar("RUNNING"), log = log_data))
+  expect_equal(res$data, list(status = scalar("WORKING"), log = log_data))
 
   res <- endpoint$run(version, id, TRUE, 3)
   expect_equal(res$status_code, 200L)
   expect_equal(res$content_type, "application/json")
-  expect_equal(res$data, list(status = scalar("RUNNING"), log = log_data[4:5]))
+  expect_equal(res$data, list(status = scalar("WORKING"), log = log_data[4:5]))
 
   res <- endpoint$run(version, id, TRUE, 20)
   expect_equal(res$status_code, 200L)
   expect_equal(res$content_type, "application/json")
-  expect_equal(res$data, list(status = scalar("RUNNING"), log = character(0)))
+  expect_equal(res$data, list(status = scalar("WORKING"), log = character(0)))
 })
 
 

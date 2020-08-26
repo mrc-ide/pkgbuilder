@@ -47,7 +47,7 @@ You also need to start workers that will build packages
 pkgbuilder::pb_worker("pb")
 ```
 
-Submit a job by posting to `/<version>/submit`
+Submit a job that builds a package based on a github reference by posting to `/<version>/submit/ref`
 
 ```
 $ curl -s --data '{"ref": "mrc-ide/dust"}' -H "Content-Type: application/json" \
