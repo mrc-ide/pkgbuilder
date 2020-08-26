@@ -16,7 +16,7 @@
 ##' @return Never returns - runs a HTTP server as a side-effect
 ##' @export
 pb_server <- function(versions, workdir, port) {
-  queue <- queue$new(version, workdir)
+  queue <- queue$new(versions, workdir)
   api <- api_build(queue)
   api$run(port = port)
 }
