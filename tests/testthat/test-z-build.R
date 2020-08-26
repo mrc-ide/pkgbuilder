@@ -8,7 +8,12 @@ test_that("build a package", {
 
   lib <- tempfile()
   dir_create(lib)
-  pak::local_install(res, lib)
+  ## Installing this does not work with pak as it gets confused about
+  ## it not being a source package.
+  ## > pak::local_install(res, lib)
+  ## > pak::pkg_install(paste0("local::", res), lib)
+  ## However, a direct install does work
+  install.packages(res, lib2, repos = NULL)
 
   expect_true("defer" %in% dir(lib))
 })
