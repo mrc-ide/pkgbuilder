@@ -51,3 +51,8 @@ vcapply <- function(x, fun, ...) {
 data_frame <- function(...) {
   data.frame(..., stringsAsFactors = FALSE, check.names = FALSE)
 }
+
+
+r_version2 <- function(version = getRversion()) {
+  as.character(version[1, 1:2])
+}

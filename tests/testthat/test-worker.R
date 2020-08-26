@@ -18,7 +18,7 @@ test_that("worker build submits jobs via callr::r", {
   mock_callr_r <- mockery::mock(path)
   res <- with_mock(
     "callr::r" = mock_callr_r,
-    worker_build(version, id, data))
+    worker_build(version, id, data, Inf))
   expect_true(res)
 
   dest <- file.path(path_binary(workdir, version, id), basename(path))
@@ -34,6 +34,7 @@ test_that("worker build submits jobs via callr::r", {
   expect_equal(args$args, data)
   expect_equal(args$stdout, path_log(workdir, version, id))
   expect_equal(args$stderr, path_log(workdir, version, id))
+  expect_equal(args$timeout, Inf)
 })
 
 
@@ -50,7 +51,7 @@ test_that("worker fail gets reported", {
   mock_callr_r <- mockery::mock(stop("some build error"))
   res <- with_mock(
     "callr::r" = mock_callr_r,
-    worker_build(version, id, data))
+    worker_build(version, id, data, 1000))
   expect_false(res)
 
   mockery::expect_called(mock_callr_r, 1)
@@ -59,6 +60,7 @@ test_that("worker fail gets reported", {
   expect_equal(args$args, data)
   expect_equal(args$stdout, path_log(workdir, version, id))
   expect_equal(args$stderr, path_log(workdir, version, id))
+  expect_equal(args$timeout, 1000)
 })
 
 
@@ -80,7 +82,7 @@ test_that("additional dependencies are passed through", {
   mock_callr_r <- mockery::mock(path)
   res <- with_mock(
     "callr::r" = mock_callr_r,
-    worker_build(version, id, data))
+    worker_build(version, id, data, Inf))
   expect_true(res)
 
   mockery::expect_called(mock_callr_r, 1)
@@ -101,17 +103,18 @@ test_that("report back to queue on failure", {
 
   with_mock(
     "pkgbuilder:::worker_build" = mock_worker_build,
-    worker_poll(lq, version))
+    worker_poll(lq, version, Inf))
 
   expect_equal(q$list(version)$status, "FAILED")
   expect_equal(q$status(version, id), list(status = "FAILED", log = NULL))
   expect_null(q$result(version, id))
 
   mockery::expect_called(mock_worker_build, 1)
+  data <- list(ref = "user/repo",
+               extra_dependencies = NULL,
+               workdir = workdir)
   expect_equal(mockery::mock_args(mock_worker_build)[[1]],
-               list(version, id, list(ref = "user/repo",
-                                      extra_dependencies = NULL,
-                                      workdir = workdir)))
+               list(version, id, data, Inf))
 })
 
 
@@ -132,7 +135,7 @@ test_that("remove from queue on success", {
 
   with_mock(
     "pkgbuilder:::worker_build" = mock_worker_build,
-    worker_poll(lq, version))
+    worker_poll(lq, version, Inf))
 
   expect_equal(q$list(version)$status, character(0))
   expect_equal(q$status(version, id), list(status = "COMPLETE", log = NULL))
@@ -140,10 +143,11 @@ test_that("remove from queue on success", {
   expect_equal(q$result(version, id), path_result)
 
   mockery::expect_called(mock_worker_build, 1)
+  data <- list(ref = "user/repo",
+               extra_dependencies = NULL,
+               workdir = workdir)
   expect_equal(mockery::mock_args(mock_worker_build)[[1]],
-               list(version, id, list(ref = "user/repo",
-                                      extra_dependencies = NULL,
-                                      workdir = workdir)))
+               list(version, id, data, Inf))
 })
 
 
@@ -154,12 +158,26 @@ test_that("construct worker", {
 
   mock_worker_poll <- mockery::mock()
   with_mock("pkgbuilder:::worker_poll" = mock_worker_poll, {
-    poll <- pb_worker(version, workdir)
+    poll <- pb_worker(version, workdir, NULL)
     expect_is(poll, "function")
     poll()
     mockery::expect_called(mock_worker_poll, 1)
     args <- mockery::mock_args(mock_worker_poll)[[1]]
     expect_s3_class(args[[1]], "liteq_queue")
     expect_equal(args[[2]], version)
+    expect_equal(args[[3]], Inf)
   })
+})
+
+
+test_that("check timeout", {
+  expect_identical(check_timeout(NULL), Inf)
+  expect_identical(check_timeout(Inf), Inf)
+  expect_identical(check_timeout(100), 100)
+  expect_error(check_timeout(c(10, 100)),
+               "Expected a single positive numeric value for 'timeout'")
+  expect_error(check_timeout("10s"),
+               "Expected a single positive numeric value for 'timeout'")
+  expect_error(check_timeout(-19),
+               "Expected a single positive numeric value for 'timeout'")
 })
