@@ -17,6 +17,7 @@ Imports:
     jsonlite,
     liteq,
     pak (>= 0.1.2.9001),
+    pkgapi,
     pkgbuild,
     pkgdepends,
     withr
