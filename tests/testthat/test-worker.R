@@ -153,12 +153,12 @@ test_that("remove from queue on success", {
 
 test_that("construct worker", {
   workdir <- tempfile()
-  version <- "4.0"
-  q <- queue$new(c("3.6", "4.0"), workdir)
+  version <- r_version2()
+  q <- queue$new(unique(c("3.6", "4.0", version)), workdir)
 
   mock_worker_poll <- mockery::mock()
   with_mock("pkgbuilder:::worker_poll" = mock_worker_poll, {
-    poll <- pb_worker(version, workdir, NULL)
+    poll <- pb_worker(workdir, NULL)
     expect_is(poll, "function")
     poll()
     mockery::expect_called(mock_worker_poll, 1)

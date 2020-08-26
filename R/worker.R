@@ -1,9 +1,9 @@
-pb_worker <- function(version, workdir, timeout = NULL) {
+pb_worker <- function(workdir, timeout = NULL) {
   path <- path_queue(workdir)
-
-  check_version(version, vcapply(liteq::list_queues(path), "[[", "name"))
   timeout <- check_timeout(timeout)
 
+  version <- r_version2()
+  check_version(version, vcapply(liteq::list_queues(path), "[[", "name"))
   queue <- liteq::ensure_queue(version, path)
 
   function() {
