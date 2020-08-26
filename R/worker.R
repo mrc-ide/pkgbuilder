@@ -12,6 +12,11 @@
 ##'
 ##' @export
 pb_worker <- function(workdir, timeout = NULL) {
+  forever(worker_create(workdir, timeout)) # nocov
+}
+
+
+worker_create <- function(workdir, timeout) {
   path <- path_queue(workdir)
   timeout <- check_timeout(timeout)
 
@@ -19,13 +24,8 @@ pb_worker <- function(workdir, timeout = NULL) {
   check_version(version, vcapply(liteq::list_queues(path), "[[", "name"))
   queue <- liteq::ensure_queue(version, path)
 
-  ## Run the loop forever. Practically this will run without stopping,
-  ## and the check here is only for testing where we'll have the poll
-  ## stop
-  repeat {
-    if (!worker_poll(queue, version, timeout)) {
-      break
-    }
+  function() {
+    worker_poll(queue, version, timeout)
   }
 }
 

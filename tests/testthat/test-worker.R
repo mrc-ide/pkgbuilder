@@ -160,15 +160,21 @@ test_that("construct worker", {
   version <- r_version2()
   q <- queue$new(unique(c("3.6", "4.0", version)), workdir)
 
-  mock_worker_poll <- mockery::mock(TRUE, TRUE, FALSE)
-  with_mock("pkgbuilder:::worker_poll" = mock_worker_poll, {
-    pb_worker(workdir, NULL)
-    mockery::expect_called(mock_worker_poll, 3)
-    lq <- liteq::ensure_queue(version, path_queue(workdir))
-    expect_equal(
-      mockery::mock_args(mock_worker_poll),
-      rep(list(list(lq, version, Inf)), 3))
-  })
+  f <- function() NULL
+  mock_forever <- mockery::mock()
+  mock_worker_create <- mockery::mock(f)
+
+  with_mock(
+    "pkgbuilder:::forever" = mock_forever,
+    "pkgbuilder:::worker_create" = mock_worker_create,
+    pb_worker(workdir, NULL))
+
+  mockery::expect_called(mock_forever, 1)
+  expect_equal(mockery::mock_args(mock_forever)[[1]], list(f))
+
+  mockery::expect_called(mock_worker_create, 1)
+  expect_equal(mockery::mock_args(mock_worker_create)[[1]],
+               list(workdir, NULL))
 })
 
 

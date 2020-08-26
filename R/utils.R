@@ -56,3 +56,10 @@ data_frame <- function(...) {
 r_version2 <- function(version = getRversion()) {
   as.character(version[1, 1:2])
 }
+
+
+forever <- function(callback) {
+  repeat {
+    callback()
+  }
+}

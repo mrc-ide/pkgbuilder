@@ -7,7 +7,7 @@ test_that("run a job in a queue", {
   q <- queue$new(version, workdir)
   id <- q$submit(version, "reside-ic/defer", NULL)
 
-  w <- pb_worker(workdir)
+  w <- worker_create(workdir, NULL)
   w()
 
   expect_equal(
