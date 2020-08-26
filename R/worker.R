@@ -12,7 +12,7 @@
 ##'
 ##' @export
 pb_worker <- function(workdir, timeout = NULL) {
-  forever(worker_create(workdir, timeout)) # nocov
+  forever(worker_create(workdir, timeout))
 }
 
 
