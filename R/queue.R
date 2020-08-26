@@ -81,8 +81,6 @@ queue <- R6::R6Class(
 
     result = function(version, id) {
       check_version(version, self$versions)
-      ## NOTE: ignores version, but I think that's ok. However, we
-      ## might structure this directory by version later.
       if (private$is_complete(version, id)) {
         dir(path_binary(private$workdir, version, id), full.names = TRUE)
       } else {
