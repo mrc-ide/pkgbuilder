@@ -63,3 +63,8 @@ forever <- function(callback) {
     callback()
   }
 }
+
+
+read_binary <- function(path) {
+  readBin(path, raw(), file.size(path))
+}
