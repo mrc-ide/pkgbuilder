@@ -24,7 +24,7 @@ test_that("build a package with compiled code", {
   dir_create(lib)
   install.packages(res, lib, repos = NULL)
 
-  expect_true(all(c("R6", "ring") %in% dir(lib)))
+  expect_true("ring" %in% dir(lib))
 })
 
 
