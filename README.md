@@ -24,7 +24,7 @@ Bring up an API using
 pkgbuilder::pb_server(c("3.6", "4.0"), "pb", 8080)
 ```
 
-This will block, but expose a server on port 8080
+This will never return, but expose a server on port 8080
 
 ```
 $ curl -s http://localhost:8080/ | jq
@@ -47,11 +47,13 @@ You also need to start workers that will build packages
 pkgbuilder::pb_worker("pb")
 ```
 
+The version of R used by the worker must match one of the versions that the server supports (ignoring the patch version).
+
 Submit a job that builds a package based on a github reference by posting to `/<version>/submit/ref`
 
 ```
 $ curl -s --data '{"ref": "mrc-ide/dust"}' -H "Content-Type: application/json" \
-  http://localhost:8080/4.0/submit | jq
+  http://localhost:8080/4.0/submit/ref | jq
 {
   "status": "success",
   "errors": null,
