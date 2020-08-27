@@ -193,7 +193,7 @@ test_that("construct api", {
   expect_equal(from_json(res$body)$data$versions, version)
 
   data <- to_json(list(ref = scalar("user/repo")))
-  res <- api$request("POST", "/4.0/submit", body = data)
+  res <- api$request("POST", "/4.0/submit/ref", body = data)
   id <- from_json(res$body)$data
   expect_match(id, "^[[:xdigit:]]{32}$")
 
