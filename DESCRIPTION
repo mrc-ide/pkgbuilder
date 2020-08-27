@@ -22,9 +22,13 @@ Imports:
     pkgdepends,
     withr
 Suggests:
+    jsonvalidate,
     mockery,
     testthat
 RoxygenNote: 7.1.1
 Roxygen: list(markdown = TRUE)
-Remotes: r-lib/pkgdepends
+Remotes:
+    r-lib/pkgdepends,
+    ropensci/jsonvalidate,
+    reside-ic/pkgapi
 Additional_repositories: https://r-lib.github.io/p/pak/dev/
