@@ -34,7 +34,7 @@ api_build <- function(queue) {
 
 
 target_root <- function(queue) {
-  pkgbuilder <- scalar(as.character(packageVersion("pkgbuilder")))
+  pkgbuilder <- scalar(as.character(utils::packageVersion("pkgbuilder")))
   function() {
     list(pkgbuilder = pkgbuilder,
          versions = queue$versions)
