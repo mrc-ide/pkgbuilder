@@ -16,7 +16,6 @@ Imports:
     gert,
     jsonlite,
     liteq,
-    pak (>= 0.1.2.9001),
     pkgapi,
     pkgbuild,
     pkgdepends,
@@ -31,4 +30,3 @@ Remotes:
     r-lib/pkgdepends,
     ropensci/jsonvalidate,
     reside-ic/pkgapi
-Additional_repositories: https://r-lib.github.io/p/pak/dev/

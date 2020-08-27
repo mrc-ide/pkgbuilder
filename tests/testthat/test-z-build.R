@@ -8,11 +8,6 @@ test_that("build a package", {
 
   lib <- tempfile()
   dir_create(lib)
-  ## Installing this does not work with pak as it gets confused about
-  ## it not being a source package.
-  ## > pak::local_install(res, lib)
-  ## > pak::pkg_install(paste0("local::", res), lib)
-  ## However, a direct install does work
   install.packages(res, lib, repos = NULL)
 
   expect_true("defer" %in% dir(lib))
@@ -27,7 +22,7 @@ test_that("build a package with compiled code", {
 
   lib <- tempfile()
   dir_create(lib)
-  pak::local_install(res, lib)
+  install.packages(res, lib, repos = NULL)
 
   expect_true(all(c("R6", "ring") %in% dir(lib)))
 })
@@ -46,7 +41,7 @@ test_that("build a package with extra dependencies", {
 
   lib <- tempfile()
   dir_create(lib)
-  pak::local_install(res, lib)
+  install.packages(res, lib, repos = NULL)
 
   expect_true("dde" %in% dir(lib))
 })
