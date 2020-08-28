@@ -14,6 +14,7 @@
 ##'
 ##' @export
 pb_build <- function(ref, extra_dependencies = NULL, workdir = NULL) {
+  ref <- pkgdepends::parse_pkg_ref(ref)
   mirror <- update_mirror(ref, workdir)
 
   src <- update_source_tree(ref, mirror, workdir)
@@ -23,6 +24,22 @@ pb_build <- function(ref, extra_dependencies = NULL, workdir = NULL) {
   on.exit(unlink(lib, recursive = TRUE), add = TRUE)
 
   build_binary(src, lib, workdir)
+}
+
+
+
+##' Update a package source
+##'
+##' @title Update package source
+##'
+##' @inheritParams pb_build
+##'
+##' @return Character string, being the path to the checked out source tree
+##' @export
+pb_source <- function(ref, workdir = NULL) {
+  ref <- pkgdepends::parse_pkg_ref(ref)
+  mirror <- update_mirror(ref, workdir)
+  update_source_tree(ref, mirror, workdir)
 }
 
 
@@ -82,7 +99,6 @@ build_binary <- function(path, lib, workdir) {
 
 
 update_mirror <- function(ref, workdir) {
-  ref <- pkgdepends::parse_pkg_ref(ref)
   if (ref$type != "github") {
     stop("Non-github refs not yet supported")
   }
@@ -105,15 +121,20 @@ update_mirror <- function(ref, workdir) {
 
 
 update_source_tree <- function(ref, mirror, workdir) {
-  ref <- pkgdepends::parse_pkg_ref(ref)$commitish
+  git_ref <- ref$commitish
   message("Preparing source tree")
   src <- temp_dir("src", workdir)
   gert::git_clone(mirror, src)
-  if (nzchar(ref)) {
-    message(sprintf("Checking out ref '%s'", ref))
-    ## TODO: this does not work for non-branch refs (hashes, prs, tags)
-    gert::git_branch_create(ref, paste0("origin/", ref),
-                            checkout = TRUE, repo = src)
+  if (nzchar(git_ref)) {
+    message(sprintf("Checking out ref '%s'", git_ref))
+    git_ref_origin <- paste0("origin/", git_ref)
+    if (git_ref_origin %in% gert::git_branch_list()$name) {
+      message(sprintf("Interpreting ref '%s' as branch", git_ref))
+      git_ref <- git_ref_origin
+    }
+    ## branch naming could be alieved if we dropped the .git directory?
+    gert::git_branch_create("pkgbuilder/src")
+    gert::git_reset("hard", git_ref, repo = src)
   }
   src
 }

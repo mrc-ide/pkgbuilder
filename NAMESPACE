@@ -2,4 +2,5 @@
 
 export(pb_build)
 export(pb_server)
+export(pb_source)
 export(pb_worker)

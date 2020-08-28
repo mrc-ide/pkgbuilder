@@ -7,7 +7,7 @@
 temp_dir <- function(type, workdir = NULL) {
   ret <- tempfile(tmpdir = workdir %||% tempdir(),
                   pattern = sprintf("pb_%s_", type))
-  dir.create(ret, FALSE, TRUE)
+  dir_create(ret)
   ret
 }
 

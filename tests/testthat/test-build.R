@@ -79,10 +79,10 @@ test_that("build_binary sets .libPaths()", {
 
 test_that("update mirror accepts only github references", {
   expect_error(
-    update_mirror("pkg", NULL),
+    update_mirror(pkgdepends::parse_pkg_ref("pkg"), NULL),
     "Non-github refs not yet supported")
   expect_error(
-    update_mirror("standard::pkg", NULL),
+    update_mirror(pkgdepends::parse_pkg_ref("standard::pkg"), NULL),
     "Non-github refs not yet supported")
 })
 
@@ -90,7 +90,7 @@ test_that("update mirror accepts only github references", {
 test_that("update mirror clones path if it does not exist", {
   skip_if_not_installed("mockery")
   workdir <- tempfile()
-  ref <- "user/repo@branch"
+  ref <- pkgdepends::parse_pkg_ref("user/repo@branch")
   mock_git_fetch <- mockery::mock()
   mock_git_clone <- mockery::mock()
   expected_mirror <- file.path(workdir, "mirror/github/user/repo")
@@ -114,10 +114,10 @@ test_that("update mirror clones path if it does not exist", {
 test_that("update mirror fetches path if it does exist", {
   skip_if_not_installed("mockery")
   workdir <- tempfile()
-  ref <- "user/repo"
+  ref <- pkgdepends::parse_pkg_ref("user/repo")
   mock_git_fetch <- mockery::mock()
   mock_git_clone <- mockery::mock()
-  expected_mirror <- file.path(workdir, "mirror/github", ref)
+  expected_mirror <- file.path(workdir, "mirror/github", ref$ref)
   dir_create(expected_mirror)
   on.exit(unlink(expected_mirror, recursive = TRUE))
 
@@ -189,7 +189,7 @@ test_that("update source tree from mirror ignores missing reference", {
 
 test_that("pb_build passes expected arguments and cleans up", {
   skip_if_not_installed("mockery")
-  ref <- "user/repo"
+  ref <- pkgdepends::parse_pkg_ref("user/repo")
   extra_dependencies <- "user/extra"
   workdir <- tempfile()
   mirror <- tempfile()
@@ -208,7 +208,7 @@ test_that("pb_build passes expected arguments and cleans up", {
     "pkgbuilder::update_source_tree" = mock_update_source_tree,
     "pkgbuilder::install_dependencies" = mock_install_dependencies,
     "pkgbuilder::build_binary" = mock_build_binary,
-    pb_build(ref, extra_dependencies, workdir))
+    pb_build(ref$ref, extra_dependencies, workdir))
 
   mockery::expect_called(mock_update_mirror, 1)
   expect_equal(mockery::mock_args(mock_update_mirror)[[1]],
