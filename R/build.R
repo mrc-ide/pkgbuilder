@@ -14,22 +14,22 @@
 ##'
 ##' @export
 pb_build <- function(ref, extra_dependencies = NULL, workdir = NULL) {
-  mirror <- pb_update_mirror(ref, workdir)
+  mirror <- update_mirror(ref, workdir)
 
-  src <- pb_update_source_tree(ref, mirror, workdir)
+  src <- update_source_tree(ref, mirror, workdir)
   on.exit(unlink(src, recursive = TRUE), add = TRUE)
 
-  lib <- pb_install_dependencies(src, extra_dependencies, workdir)
+  lib <- install_dependencies(src, extra_dependencies, workdir)
   on.exit(unlink(lib, recursive = TRUE), add = TRUE)
 
-  pb_build_binary(src, lib, workdir)
+  build_binary(src, lib, workdir)
 }
 
 
 ## Additional_repos is not supported, and setting additional repos in
 ## options(repos) does not seem to have an effect; this will cause a
 ## little grief, but hopefully not too much.
-pb_install_dependencies <- function(path, extra, workdir) {
+install_dependencies <- function(path, extra, workdir) {
   lib <- temp_dir("lib", workdir)
   on.exit(unlink(lib, recursive = TRUE))
   if (!is.null(extra)) {
@@ -71,7 +71,7 @@ install_proposal <- function(proposal, lib) {
 }
 
 
-pb_build_binary <- function(path, lib, workdir) {
+build_binary <- function(path, lib, workdir) {
   dest <- temp_dir("bin", workdir)
   message("Building binary")
   dir_create(dest)
@@ -81,7 +81,7 @@ pb_build_binary <- function(path, lib, workdir) {
 }
 
 
-pb_update_mirror <- function(ref, workdir) {
+update_mirror <- function(ref, workdir) {
   ref <- pkgdepends::parse_pkg_ref(ref)
   if (ref$type != "github") {
     stop("Non-github refs not yet supported")
@@ -104,7 +104,7 @@ pb_update_mirror <- function(ref, workdir) {
 }
 
 
-pb_update_source_tree <- function(ref, mirror, workdir) {
+update_source_tree <- function(ref, mirror, workdir) {
   ref <- pkgdepends::parse_pkg_ref(ref)$commitish
   message("Preparing source tree")
   src <- temp_dir("src", workdir)

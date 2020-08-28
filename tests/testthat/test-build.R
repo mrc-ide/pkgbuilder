@@ -1,6 +1,6 @@
 context("build")
 
-test_that("pb_install_dependencies does not install NULL extra deps", {
+test_that("install_dependencies does not install NULL extra deps", {
   skip_if_not_installed("mockery")
   mock_install_extra <- mockery::mock()
   mock_install_deps <- mockery::mock()
@@ -12,7 +12,7 @@ test_that("pb_install_dependencies does not install NULL extra deps", {
   res <- with_mock(
     "pkgbuilder::install_extra" = mock_install_extra,
     "pkgbuilder::install_deps" = mock_install_deps,
-    pb_install_dependencies(path, extra, workdir))
+    install_dependencies(path, extra, workdir))
 
   mockery::expect_called(mock_install_extra, 0)
 
@@ -25,7 +25,7 @@ test_that("pb_install_dependencies does not install NULL extra deps", {
 })
 
 
-test_that("pb_install_dependencies installs extra deps", {
+test_that("install_dependencies installs extra deps", {
   skip_if_not_installed("mockery")
   mock_install_extra <- mockery::mock()
   mock_install_deps <- mockery::mock()
@@ -37,7 +37,7 @@ test_that("pb_install_dependencies installs extra deps", {
   res <- with_mock(
     "pkgbuilder:::install_extra" = mock_install_extra,
     "pkgbuilder:::install_deps" = mock_install_deps,
-    pb_install_dependencies(path, extra, workdir))
+    install_dependencies(path, extra, workdir))
 
   mockery::expect_called(mock_install_extra, 1)
   args <- mockery::mock_args(mock_install_extra)[[1]]
@@ -52,7 +52,7 @@ test_that("pb_install_dependencies installs extra deps", {
 })
 
 
-test_that("pb_build_binary sets .libPaths()", {
+test_that("build_binary sets .libPaths()", {
   skip_if_not_installed("mockery")
   mock_build <- mockery::mock(.libPaths())
 
@@ -64,7 +64,7 @@ test_that("pb_build_binary sets .libPaths()", {
 
   res <- with_mock(
     "pkgbuild::build" = mock_build,
-    pb_build_binary(path, lib, workdir))
+    build_binary(path, lib, workdir))
   expect_true(same_path(res[[1]], lib))
   mockery::expect_called(mock_build, 1)
 
@@ -79,10 +79,10 @@ test_that("pb_build_binary sets .libPaths()", {
 
 test_that("update mirror accepts only github references", {
   expect_error(
-    pb_update_mirror("pkg", NULL),
+    update_mirror("pkg", NULL),
     "Non-github refs not yet supported")
   expect_error(
-    pb_update_mirror("standard::pkg", NULL),
+    update_mirror("standard::pkg", NULL),
     "Non-github refs not yet supported")
 })
 
@@ -98,7 +98,7 @@ test_that("update mirror clones path if it does not exist", {
   mirror <- with_mock(
     "gert::git_fetch" = mock_git_fetch,
     "gert::git_clone" = mock_git_clone,
-    pb_update_mirror(ref, workdir))
+    update_mirror(ref, workdir))
 
   expect_equal(mirror, expected_mirror)
   mockery::expect_called(mock_git_fetch, 0)
@@ -124,7 +124,7 @@ test_that("update mirror fetches path if it does exist", {
   mirror <- with_mock(
     "gert::git_fetch" = mock_git_fetch,
     "gert::git_clone" = mock_git_clone,
-    pb_update_mirror(ref, workdir))
+    update_mirror(ref, workdir))
 
   expect_equal(mirror, expected_mirror)
   mockery::expect_called(mock_git_fetch, 1)
@@ -147,7 +147,7 @@ test_that("update source tree from mirror gets correct reference", {
   src <- with_mock(
     "gert::git_clone" = mock_git_clone,
     "gert::git_branch_create" = mock_git_branch_create,
-    pb_update_source_tree(ref, mirror, workdir))
+    update_source_tree(ref, mirror, workdir))
 
   expect_true(same_path(dirname(src), workdir))
   expect_match(basename(src), "^pb_src_")
@@ -174,7 +174,7 @@ test_that("update source tree from mirror ignores missing reference", {
   src <- with_mock(
     "gert::git_clone" = mock_git_clone,
     "gert::git_branch_create" = mock_git_branch_create,
-    pb_update_source_tree(ref, mirror, workdir))
+    update_source_tree(ref, mirror, workdir))
 
   expect_true(same_path(dirname(src), workdir))
   expect_match(basename(src), "^pb_src_")
@@ -204,10 +204,10 @@ test_that("pb_build passes expected arguments and cleans up", {
   mock_build_binary <- mockery::mock()
 
   with_mock(
-    "pkgbuilder::pb_update_mirror" = mock_update_mirror,
-    "pkgbuilder::pb_update_source_tree" = mock_update_source_tree,
-    "pkgbuilder::pb_install_dependencies" = mock_install_dependencies,
-    "pkgbuilder::pb_build_binary" = mock_build_binary,
+    "pkgbuilder::update_mirror" = mock_update_mirror,
+    "pkgbuilder::update_source_tree" = mock_update_source_tree,
+    "pkgbuilder::install_dependencies" = mock_install_dependencies,
+    "pkgbuilder::build_binary" = mock_build_binary,
     pb_build(ref, extra_dependencies, workdir))
 
   mockery::expect_called(mock_update_mirror, 1)
