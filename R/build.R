@@ -34,15 +34,40 @@ pb_install_dependencies <- function(path, extra, workdir) {
   on.exit(unlink(lib, recursive = TRUE))
   if (!is.null(extra)) {
     message("Installing additional dependencies")
-    pak::pkg_install(extra, lib, ask = FALSE)
+    install_extra(extra, lib)
   }
 
   message("Preparing local library")
-  pak::local_install_dev_deps(path, lib, ask = FALSE)
+  install_deps(path, lib)
 
   on.exit()
 
   lib
+}
+
+
+install_extra <- function(extra, lib) {
+  config <- list(library = lib)
+  install_proposal(
+    pkgdepends::new_pkg_installation_proposal(extra, config = config), lib)
+}
+
+
+install_deps <- function(path, lib) {
+  config <- list(library = lib, dependencies = TRUE)
+  name <- paste0("deps::", path)
+  install_proposal(
+    pkgdepends::new_pkg_installation_proposal(name, config = config), lib)
+}
+
+
+install_proposal <- function(proposal, lib) {
+  proposal$solve()
+  proposal$stop_for_solution_error()
+  proposal$download()
+  proposal$stop_for_download_error()
+  plan <- proposal$get_install_plan()
+  print(pkgdepends::install_package_plan(plan = plan, lib = lib))
 }
 
 

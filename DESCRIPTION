@@ -10,13 +10,14 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Language: en-GB
+URL: https://github.com/mrc-ide/pkgbuilder
+BugReports: https://github.com/mrc-ide/pkgbuilder/issues
 Imports:
     callr,
     ids,
     gert,
     jsonlite,
     liteq,
-    pak (>= 0.1.2.9001),
     pkgapi,
     pkgbuild,
     pkgdepends,
@@ -31,4 +32,3 @@ Remotes:
     r-lib/pkgdepends,
     ropensci/jsonvalidate,
     reside-ic/pkgapi
-Additional_repositories: https://r-lib.github.io/p/pak/dev/

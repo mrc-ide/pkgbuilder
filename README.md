@@ -9,11 +9,9 @@
 
 ## Installation
 
-We require the in-development version of `pak` with its bundled library, at least for now.  Our installation instructions are a bit unusual as a result:
 
 ```r
-install.packages("pak", repos = "https://r-lib.github.io/p/pak/dev/")
-pak::pkg_install("mrc-ide/pkgbuilder")
+remotes::install_github("mrc-ide/pkgbuilder")
 ```
 
 ## Usage

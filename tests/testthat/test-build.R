@@ -2,53 +2,53 @@ context("build")
 
 test_that("pb_install_dependencies does not install NULL extra deps", {
   skip_if_not_installed("mockery")
-  mock_pkg_install <- mockery::mock()
-  mock_local_install_dev_deps <- mockery::mock()
+  mock_install_extra <- mockery::mock()
+  mock_install_deps <- mockery::mock()
 
   path <- tempfile()
   extra <- NULL
   workdir <- tempfile()
 
   res <- with_mock(
-    "pak::pkg_install" = mock_pkg_install,
-    "pak::local_install_dev_deps" = mock_local_install_dev_deps,
+    "pkgbuilder::install_extra" = mock_install_extra,
+    "pkgbuilder::install_deps" = mock_install_deps,
     pb_install_dependencies(path, extra, workdir))
 
-  mockery::expect_called(mock_pkg_install, 0)
+  mockery::expect_called(mock_install_extra, 0)
 
-  mockery::expect_called(mock_local_install_dev_deps, 1)
-  args <- mockery::mock_args(mock_local_install_dev_deps)[[1]]
+  mockery::expect_called(mock_install_deps, 1)
+  args <- mockery::mock_args(mock_install_deps)[[1]]
   lib <- args[[2]]
   expect_true(same_path(dirname(lib), workdir))
   expect_match(basename(lib), "^pb_lib_")
-  expect_equal(args, list(path, lib, ask = FALSE))
+  expect_equal(args, list(path, lib))
 })
 
 
 test_that("pb_install_dependencies installs extra deps", {
   skip_if_not_installed("mockery")
-  mock_pkg_install <- mockery::mock()
-  mock_local_install_dev_deps <- mockery::mock()
+  mock_install_extra <- mockery::mock()
+  mock_install_deps <- mockery::mock()
 
   path <- tempfile()
   extra <- c("a/b", "c/d")
   workdir <- tempfile()
 
   res <- with_mock(
-    "pak::pkg_install" = mock_pkg_install,
-    "pak::local_install_dev_deps" = mock_local_install_dev_deps,
+    "pkgbuilder:::install_extra" = mock_install_extra,
+    "pkgbuilder:::install_deps" = mock_install_deps,
     pb_install_dependencies(path, extra, workdir))
 
-  mockery::expect_called(mock_pkg_install, 1)
-  args <- mockery::mock_args(mock_pkg_install)[[1]]
+  mockery::expect_called(mock_install_extra, 1)
+  args <- mockery::mock_args(mock_install_extra)[[1]]
   lib <- args[[2]]
   expect_true(same_path(dirname(lib), workdir))
   expect_match(basename(lib), "^pb_lib_")
-  expect_equal(args, list(extra, lib, ask = FALSE))
+  expect_equal(args, list(extra, lib))
 
-  mockery::expect_called(mock_local_install_dev_deps, 1)
-  args <- mockery::mock_args(mock_local_install_dev_deps)[[1]]
-  expect_equal(args, list(path, lib, ask = FALSE))
+  mockery::expect_called(mock_install_deps, 1)
+  args <- mockery::mock_args(mock_install_deps)[[1]]
+  expect_equal(args, list(path, lib))
 })
 
 
